@@ -13,13 +13,15 @@ namespace KittyCam
         private readonly LibVLC _libVLC;
         private string areiaGatos;
         private string quartoGatos;
+        private string filename1;
+        private string filename2;
         private bool isRecording = false;
         private string recordingPath = ConfigurationManager.AppSettings["RecordingsPath"];
         private MediaPlayer _mediaPlayer1;
         private MediaPlayer _mediaPlayer2;
         private MediaPlayer _recordingPlayer1;
         private MediaPlayer _recordingPlayer2;
-
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -105,9 +107,10 @@ namespace KittyCam
             _recordingPlayer2 = new MediaPlayer(_libVLC);
             var media1 = new Media(_libVLC, new Uri(areiaGatos));
             var media2 = new Media(_libVLC, new Uri(quartoGatos));
-          
-            media1.AddOption(":sout=#file{dst=" + recordingPath + DateTime.Now.ToString("yyyyMMdd") + "_areiaGatos.mp4}");
-            media2.AddOption(":sout=#file{dst=" + recordingPath + DateTime.Now.ToString("yyyyMMdd") + "_quartoGatos.mp4}");
+            filename1 = recordingPath + DateTime.Now.ToString("yyyyMMddHHmmss") + "_areiaGatos.mp4";
+            filename2 = recordingPath + DateTime.Now.ToString("yyyyMMddHHmmss") + "_quartoGatos.mp4";
+            media1.AddOption(":sout=#file{dst=" + filename1 +"}");
+            media2.AddOption(":sout=#file{dst=" + filename2+ "}");
             
             _recordingPlayer1.Play(media1); 
             _recordingPlayer2.Play(media2);
@@ -127,7 +130,7 @@ namespace KittyCam
             _recordingPlayer2?.Dispose();
             RecordButton.Content = "Start Recording";
 
-            if (File.Exists(recordingPath))
+            if (File.Exists(filename1) || File.Exists(filename2))
             {
                 MessageBox.Show($"Recordings saved");
             }
